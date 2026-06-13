@@ -1,0 +1,21 @@
+id,name,department,salary,city,joining_date,status
+101,Bulbul Ahmed,Engineering,85000,Dhaka,2018-03-15,active
+102,Rina Begum,HR,55000,Chittagong,2019-07-01,active
+103,Kamal Hossain,Engineering,92000,Dhaka,2017-01-10,active
+104,Sadia Islam,Marketing,62000,Sylhet,2020-04-20,active
+105,Rahim Khan,Engineering,78000,Dhaka,2021-06-15,active
+106,Nusrat Jahan,Finance,68000,Chittagong,2019-11-30,active
+107,Arif Rahman,Engineering,95000,Dhaka,2016-08-01,active
+108,Farhana Akter,HR,52000,Dhaka,2022-02-14,active
+109,Tanvir Ahmed,Marketing,59000,Rajshahi,2021-09-01,inactive
+110,Mitu Roy,Engineering,88000,Dhaka,2018-12-01,active
+111,Zahid Hasan,Finance,71000,Dhaka,2020-01-15,active
+112,Sharmin Akter,Engineering,82000,Chittagong,2019-03-22,active
+113,Rubel Mia,DevOps,91000,Dhaka,2017-05-10,active
+114,Nasrin Begum,Marketing,58000,Sylhet,2022-08-01,inactive
+115,Imran Hossain,DevOps,96000,Dhaka,2016-11-01,active
+116,Poly Akter,HR,54000,Chittagong,2021-04-05,active
+117,Shakil Ahmed,Engineering,79000,Dhaka,2020-07-20,active
+118,Mona Lisa,Finance,73000,Dhaka,2019-09-10,active
+119,Rafiq Islam,DevOps,89000,Dhaka,2018-06-25,active
+120,Tania Sultana,Engineering,84000,Dhaka,2020-10-01,active

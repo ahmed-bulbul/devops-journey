@@ -1,0 +1,13 @@
+web-server-01   192.168.1.10   running   ubuntu   nginx
+web-server-02   192.168.1.11   running   ubuntu   nginx
+api-server-01   10.0.0.5       running   ubuntu   java
+api-server-02   10.0.0.6       stopped   ubuntu   java
+api-server-03   10.0.0.7       running   ubuntu   java
+db-primary      10.0.1.10      running   ubuntu   mysql
+db-replica-01   10.0.1.11      running   ubuntu   mysql
+db-replica-02   10.0.1.12      stopped   ubuntu   mysql
+cache-server    10.0.2.10      running   ubuntu   redis
+queue-server    10.0.2.20      running   ubuntu   rabbitmq
+monitoring      10.0.3.10      running   ubuntu   prometheus
+bastion         203.0.113.100  running   ubuntu   ssh
+ci-server       10.0.4.10      running   ubuntu   jenkins

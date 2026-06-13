@@ -1,0 +1,20 @@
+2026-06-01 08:04:10 ERROR [DatabasePool] Connection timeout - host=db.internal port=5432
+2026-06-01 08:04:11 ERROR [DatabasePool] Retry attempt 1/3 - host=db.internal
+2026-06-01 08:04:13 ERROR [DatabasePool] Retry attempt 2/3 - host=db.internal
+2026-06-01 08:06:25 ERROR [SecurityService] Brute force detected - ip=203.0.113.5 blocked=true
+2026-06-01 08:12:15 ERROR [PaymentService] Payment failed - orderId=5002 reason=card_declined
+2026-06-01 08:17:00 ERROR [PaymentService] Payment gateway timeout - gateway=stripe duration=5000ms
+2026-06-01 08:23:45 ERROR [DatabasePool] Max connections reached - current=100 max=100
+2026-06-01 08:29:00 ERROR [OrderService] Order processing failed - orderId=5005 error=inventory_not_found
+2026-06-02 09:00:10 ERROR [UserService] NullPointerException in UserController.java:142
+2026-06-02 09:00:11 ERROR [UserService] java.lang.NullPointerException: Cannot invoke method getId() on null
+2026-06-02 09:00:11 ERROR [UserService]   at com.example.UserController.getUser(UserController.java:142)
+2026-06-02 09:00:11 ERROR [UserService]   at com.example.UserController$$FastClassBySpringCGLIB.invoke()
+2026-06-02 09:15:30 ERROR [OrderService] OutOfMemoryError - heap space exhausted
+2026-06-02 09:15:31 ERROR [OrderService] java.lang.OutOfMemoryError: Java heap space
+2026-06-02 09:15:31 ERROR [OrderService]   at java.util.Arrays.copyOf(Arrays.java:3210)
+2026-06-02 10:00:00 ERROR [ProductService] Database deadlock detected - table=products txn=TX8821
+2026-06-02 10:00:01 ERROR [ProductService] Retrying transaction TX8821
+2026-06-02 10:00:02 ERROR [ProductService] Transaction TX8821 succeeded after retry
+2026-06-02 11:30:00 ERROR [AuthService] JWT token expired - userId=101 expiry=2026-06-01T08:00:00Z
+2026-06-02 12:00:00 ERROR [EmailService] SMTP connection refused - host=smtp.internal port=587
