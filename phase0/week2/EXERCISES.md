@@ -377,21 +377,23 @@ ssh -G practice | grep -E "hostname|user|identityfile"
 ## SECTION 5 — SSH Advanced: sftp, scp, Port Forwarding
 
 ### 5.1 scp — secure copy
+Practice files are in the `data/` folder: `servers.txt`, `app.properties`, `deploy_notes.txt`
+
 ```bash
-# Copy local file TO server
-scp file.txt user@SERVER_IP:/home/user/
+# Copy a local file to /tmp (simulates copying to a server — use localhost)
+scp data/deploy_notes.txt localhost:/tmp/
 
-# Copy file FROM server
-scp user@SERVER_IP:/var/log/app.log ./logs/
+# Copy it back
+scp localhost:/tmp/deploy_notes.txt /tmp/deploy_notes_copy.txt
 
-# Copy directory (recursive)
-scp -r ./myapp/ user@SERVER_IP:/opt/
+# Copy with a config alias (after setting up 'Host practice' in Section 4)
+scp data/app.properties practice:/tmp/
 
-# Use config alias
-scp file.txt myserver:/tmp/
+# Copy entire data/ directory recursively
+scp -r data/ localhost:/tmp/week2-data/
 
 # Preserve timestamps and permissions
-scp -p file.txt user@SERVER_IP:/tmp/
+scp -p data/servers.txt localhost:/tmp/
 ```
 
 ### 5.2 sftp — interactive file transfer
@@ -466,9 +468,16 @@ ssh -f -N -L 5432:localhost:5432 user@SERVER_IP
 #   -N  no shell, just the tunnel
 ```
 
-**Challenge 6:** Use rsync dry run to preview syncing the `scripts/` folder to `/tmp/week2-test/`.
+**Challenge 6:** Use rsync dry run to preview syncing the `data/` folder to `/tmp/week2-data/`. Then do the real sync.
 ```bash
-rsync -avzn scripts/ /tmp/week2-test/
+# Dry run first
+rsync -avzn data/ /tmp/week2-data/
+
+# Real sync
+rsync -avz data/ /tmp/week2-data/
+
+# Verify
+ls -lh /tmp/week2-data/
 ```
 
 ---

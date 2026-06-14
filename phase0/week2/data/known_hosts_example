@@ -1,0 +1,17 @@
+# ~/.ssh/known_hosts — example entries
+# Stores fingerprints of servers you've connected to
+# SSH auto-adds entries here after first connection
+# Format: hostname key-type public-key
+
+# A server by IP
+192.168.1.100 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBqKu5DyfCFpZy+kK4oUB5cLmFpWVHOdGfCf...
+
+# A server by hostname
+myserver.example.com ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQ...
+
+# GitHub's fingerprint (always here if you use git over SSH)
+github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GkZQ
+
+# If a server's key changes (e.g., after reinstall), SSH will warn you:
+# WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!
+# Fix: ssh-keygen -R hostname   (removes the old entry)

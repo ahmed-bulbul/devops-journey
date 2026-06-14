@@ -1,0 +1,19 @@
+Deployment Notes — order-service v2.1.0
+=======================================
+Date: 2026-06-14
+Deploy by: bulbul
+
+Changes:
+- Added Redis caching for product lookups
+- Fixed N+1 query in OrderRepository
+- Updated Spring Boot to 3.2.5
+
+Pre-deploy checklist:
+[x] Tests passing (127/127)
+[x] Docker image built and pushed to ECR
+[x] DB migration reviewed
+[ ] Load test on staging
+[ ] Sign-off from team lead
+
+Rollback command:
+  ssh deploy@prod 'sudo systemctl restart order-service-v2.0.9'

@@ -1,0 +1,10 @@
+server-01  10.0.1.10   web     running   production
+server-02  10.0.1.11   web     running   production
+server-03  10.0.1.12   web     stopped   production
+server-04  10.0.2.10   db      running   production
+server-05  10.0.2.11   db      standby   production
+server-06  10.0.3.10   cache   running   production
+server-07  10.0.3.11   cache   stopped   production
+server-08  10.0.4.10   ci      running   staging
+server-09  10.0.4.11   ci      running   staging
+server-10  10.0.5.10   bastion running   production
