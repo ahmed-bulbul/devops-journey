@@ -1,0 +1,45 @@
+# ~/.ssh/config — SSH Client Config Reference
+# Copy relevant blocks to your real ~/.ssh/config file
+#
+# Usage: ssh <Host alias>  (e.g.  ssh myserver)
+
+# ─── Basic server alias ──────────────────────────────────────────────────────
+Host myserver
+    HostName 192.168.1.100          # IP or domain
+    User ubuntu                     # remote username
+    Port 22                         # default SSH port
+    IdentityFile ~/.ssh/id_rsa      # private key to use
+
+# ─── Jump through a bastion host ─────────────────────────────────────────────
+Host private-server
+    HostName 10.0.1.50
+    User ubuntu
+    IdentityFile ~/.ssh/id_rsa
+    ProxyJump bastion               # first SSH into bastion, then jump here
+
+Host bastion
+    HostName bastion.example.com
+    User ec2-user
+    IdentityFile ~/.ssh/bastion_key
+
+# ─── AWS EC2 example ─────────────────────────────────────────────────────────
+Host aws-dev
+    HostName ec2-XX-XX-XX-XX.compute-1.amazonaws.com
+    User ubuntu
+    IdentityFile ~/.ssh/aws-key.pem
+    ServerAliveInterval 60          # send keepalive every 60s
+    ServerAliveCountMax 3
+
+# ─── Local port forwarding ───────────────────────────────────────────────────
+# Access remote DB (port 5432) as if it were local (port 5432)
+Host db-tunnel
+    HostName myserver.com
+    User ubuntu
+    IdentityFile ~/.ssh/id_rsa
+    LocalForward 5432 localhost:5432
+
+# ─── Global defaults (apply to all hosts) ────────────────────────────────────
+Host *
+    ServerAliveInterval 120
+    AddKeysToAgent yes
+    IdentityFile ~/.ssh/id_rsa

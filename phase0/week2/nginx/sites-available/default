@@ -1,0 +1,28 @@
+# /etc/nginx/sites-available/default
+# Static website — serves files from /var/www/html
+
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+    root /var/www/html;
+    index index.html index.htm;
+
+    server_name _;          # matches any hostname
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+    # Custom error pages
+    error_page 404 /404.html;
+    error_page 500 502 503 504 /50x.html;
+    location = /50x.html {
+        root /var/www/html;
+    }
+
+    # Deny access to hidden files (.htaccess etc)
+    location ~ /\. {
+        deny all;
+    }
+}

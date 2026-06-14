@@ -1,0 +1,20 @@
+# ~/.ssh/authorized_keys — example entries
+#
+# Each line = one public key that is allowed to log in.
+# Format:  <key-type> <base64-key> <comment>
+#
+# To add your own key:
+#   cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+#   chmod 600 ~/.ssh/authorized_keys
+
+# Developer laptop key
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC2...truncated...== bulbul@laptop
+
+# CI/CD pipeline key (Jenkins)
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI...truncated...== jenkins-ci
+
+# Restrict a key to only run one command (no interactive shell)
+command="/usr/local/bin/backup.sh" ssh-rsa AAAAB3NzaC1...== backup-only-key
+
+# Restrict by source IP (only allow from office IP)
+from="203.0.113.10" ssh-rsa AAAAB3NzaC1...== office-only-key

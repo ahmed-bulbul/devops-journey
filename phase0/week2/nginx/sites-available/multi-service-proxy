@@ -1,0 +1,63 @@
+# /etc/nginx/sites-available/multi-service-proxy
+#
+# Week 2 Project — Secure Multi-Server Setup
+# Routes:
+#   /app1  → Spring Boot app 1 on port 8080
+#   /app2  → Spring Boot app 2 on port 8081
+#
+# Setup:
+#   sudo cp multi-service-proxy /etc/nginx/sites-available/
+#   sudo ln -s /etc/nginx/sites-available/multi-service-proxy /etc/nginx/sites-enabled/
+#   sudo rm -f /etc/nginx/sites-enabled/default
+#   sudo nginx -t && sudo systemctl reload nginx
+
+upstream app1 {
+    server 127.0.0.1:8080;
+    # Add more for load balancing:
+    # server 127.0.0.1:8082;          # round-robin (default)
+    # least_conn;                      # switch to least-connections
+}
+
+upstream app2 {
+    server 127.0.0.1:8081;
+}
+
+server {
+    listen 80;
+    server_name localhost;
+
+    # ─── App 1 — routes /app1/* to port 8080 ──────────────────────────────────
+    location /app1/ {
+        proxy_pass         http://app1/;    # trailing slash strips /app1 prefix
+        proxy_http_version 1.1;
+        proxy_set_header   Host              $host;
+        proxy_set_header   X-Real-IP         $remote_addr;
+        proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Proto $scheme;
+    }
+
+    # ─── App 2 — routes /app2/* to port 8081 ──────────────────────────────────
+    location /app2/ {
+        proxy_pass         http://app2/;
+        proxy_http_version 1.1;
+        proxy_set_header   Host              $host;
+        proxy_set_header   X-Real-IP         $remote_addr;
+        proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Proto $scheme;
+    }
+
+    # ─── Health check ──────────────────────────────────────────────────────────
+    location /health {
+        return 200 "nginx ok\n";
+        add_header Content-Type text/plain;
+    }
+
+    # ─── Root — show routing info ──────────────────────────────────────────────
+    location / {
+        return 200 "Routes: /app1 -> :8080  |  /app2 -> :8081\n";
+        add_header Content-Type text/plain;
+    }
+
+    access_log /var/log/nginx/multi_service_access.log;
+    error_log  /var/log/nginx/multi_service_error.log;
+}

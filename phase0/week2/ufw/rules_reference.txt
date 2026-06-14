@@ -1,0 +1,66 @@
+UFW (Uncomplicated Firewall) — Rules Reference
+===============================================
+
+BASIC STATUS
+  sudo ufw status              # show current rules (inactive/active)
+  sudo ufw status verbose      # detailed output with policies
+  sudo ufw status numbered     # show rules with rule numbers
+
+ENABLE / DISABLE
+  sudo ufw enable              # turn on firewall (persists on reboot)
+  sudo ufw disable             # turn off firewall
+  sudo ufw reset               # wipe all rules and disable
+
+DEFAULT POLICIES (always set these first!)
+  sudo ufw default deny incoming   # block all incoming (recommended)
+  sudo ufw default allow outgoing  # allow all outgoing (recommended)
+
+ALLOW BY PORT
+  sudo ufw allow 22            # allow SSH
+  sudo ufw allow 80            # allow HTTP
+  sudo ufw allow 443           # allow HTTPS
+  sudo ufw allow 8080          # allow custom app port
+
+ALLOW BY SERVICE NAME (uses /etc/services)
+  sudo ufw allow ssh           # same as allow 22/tcp
+  sudo ufw allow http          # same as allow 80/tcp
+  sudo ufw allow https         # same as allow 443/tcp
+
+ALLOW BY PROTOCOL
+  sudo ufw allow 22/tcp
+  sudo ufw allow 53/udp        # DNS
+
+ALLOW FROM SPECIFIC IP
+  sudo ufw allow from 203.0.113.10                  # any port from this IP
+  sudo ufw allow from 203.0.113.10 to any port 22   # only SSH from this IP
+  sudo ufw allow from 10.0.0.0/24                   # entire subnet
+
+DENY RULES
+  sudo ufw deny 23             # block telnet
+  sudo ufw deny from 203.0.113.5  # block specific IP
+
+DELETE RULES
+  sudo ufw delete allow 80          # delete by rule
+  sudo ufw delete 3                 # delete by rule number (from status numbered)
+
+RATE LIMITING (protect SSH from brute force)
+  sudo ufw limit 22/tcp        # max 6 connections in 30s from same IP
+
+LOGGING
+  sudo ufw logging on          # enable logging
+  sudo ufw logging off
+  sudo ufw logging high        # verbose logging
+  # Logs written to: /var/log/ufw.log
+
+RELOAD
+  sudo ufw reload              # reload after changes
+
+TYPICAL SETUP ORDER FOR A WEB SERVER
+  sudo ufw default deny incoming
+  sudo ufw default allow outgoing
+  sudo ufw allow ssh
+  sudo ufw allow http
+  sudo ufw allow https
+  sudo ufw limit 22/tcp
+  sudo ufw enable
+  sudo ufw status verbose

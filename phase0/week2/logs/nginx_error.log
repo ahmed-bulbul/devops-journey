@@ -1,0 +1,4 @@
+2026/06/14 09:02:01 [error] 1234#1234: *3 access forbidden by rule, client: 203.0.113.5, server: localhost, request: "GET /admin HTTP/1.1", host: "localhost"
+2026/06/14 09:03:12 [warn]  1234#1234: *7 open() "/var/www/html/.env" failed (2: No such file or directory), client: 203.0.113.5
+2026/06/14 09:05:01 [warn]  1234#1234: *11 open() "/var/www/html/wp-admin" failed (2: No such file or directory), client: 203.0.113.5
+2026/06/14 09:06:00 [error] 1234#1234: *13 connect() failed (111: Connection refused) while connecting to upstream, client: 10.0.0.5, upstream: "http://127.0.0.1:8080/api/products"
