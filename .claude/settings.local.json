@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(pip3 install *)"
+      "Bash(pip3 install *)",
+      "Bash(awk '$9==403 {print $1}' logs/access.log)",
+      "Bash(awk '{print $4}')",
+      "Bash(chmod +x /home/bulbul-ahmed/workspace/aws-learn/phase0/week1/scripts/*.sh)"
     ]
   }
 }

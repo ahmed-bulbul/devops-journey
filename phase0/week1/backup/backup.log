@@ -1,0 +1,4 @@
+[2026-06-14 00:36:50] START backup of /home/bulbul-ahmed/workspace/aws-learn/phase0/week1/configs
+[2026-06-14 00:36:50] Files to back up: 4
+[2026-06-14 00:36:51] SUCCESS: backup_configs_20260614_003650.tar.gz created (4.0K, 4 files)
+[2026-06-14 00:36:51] END backup complete
