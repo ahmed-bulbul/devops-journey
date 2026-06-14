@@ -1,0 +1,57 @@
+# docker-compose.prod.yml — Production overrides
+# Usage: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+# Differences from default:
+#   - No debug ports
+#   - Stricter resource limits
+#   - syslog logging driver (sends to centralized logging)
+#   - Restart always
+#   - No adminer or pgadmin
+
+version: '3.8'
+
+services:
+
+  user-service:
+    image: YOUR_DOCKERHUB_USERNAME/user-service:${IMAGE_TAG:-latest}   # pull from registry
+    restart: always
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "tcp://log-aggregator:514"
+        tag: "user-service"
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+          cpus: '1.0'
+        reservations:
+          memory: 512m
+
+  order-service:
+    image: YOUR_DOCKERHUB_USERNAME/order-service:${IMAGE_TAG:-latest}
+    restart: always
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "tcp://log-aggregator:514"
+        tag: "order-service"
+
+  product-service:
+    image: YOUR_DOCKERHUB_USERNAME/product-service:${IMAGE_TAG:-latest}
+    restart: always
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "tcp://log-aggregator:514"
+        tag: "product-service"
+
+  mysql:
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 2g
+
+  redis:
+    restart: always

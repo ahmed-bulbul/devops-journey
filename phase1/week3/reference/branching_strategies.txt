@@ -1,0 +1,69 @@
+Git Branching Strategies — Reference
+=====================================
+
+1. GITFLOW
+----------
+Branches: main, develop, feature/*, release/*, hotfix/*
+
+  main ─────────────────────────────────────────► (production)
+    └── develop ──────────────────────────────►
+          ├── feature/login ──► merge to develop
+          ├── feature/payment ──► merge to develop
+          └── release/1.2 ──► merge to main + develop
+                hotfix/critical ──► merge to main + develop
+
+Rules:
+  - Never commit directly to main or develop
+  - feature/* branches off develop, merges back to develop
+  - release/* branches off develop, merges to main + develop
+  - hotfix/* branches off main, merges to main + develop
+
+When to use: large teams, scheduled releases, versioned software
+Downside: complex, lots of long-lived branches, slow delivery
+
+2. TRUNK-BASED DEVELOPMENT
+---------------------------
+Branches: main (trunk) only, short-lived feature branches (< 2 days)
+
+  main ─────────────────────────────────────────► (always deployable)
+    ├── feature/login (lives max 2 days) ──► PR → merge to main
+    └── feature/cache (lives max 2 days) ──► PR → merge to main
+
+Rules:
+  - main is ALWAYS deployable
+  - Feature branches live < 2 days
+  - Use feature flags to hide incomplete features in production
+  - CI runs on every push — must pass before merge
+  - Small, frequent commits
+
+When to use: high-performing teams, microservices, CI/CD pipelines
+This is what top DevOps teams (Google, Netflix, Amazon) use.
+
+3. GITHUB FLOW
+--------------
+Branches: main + feature branches
+
+  main ─────────────────────────────────────────► (always deployable)
+    ├── feature/add-user-api ──► PR → review → merge → deploy
+    └── fix/null-pointer ──► PR → review → merge → deploy
+
+Rules:
+  - Anything in main can be deployed
+  - Create branch for every change (no develop branch)
+  - Open PR early, get feedback
+  - Deploy from branch before merge to verify
+  - Merge only after CI passes + review approved
+
+When to use: smaller teams, continuous deployment, web apps
+Simpler than GitFlow, more structured than trunk-based.
+
+COMPARISON TABLE
+-----------------
+| Strategy       | Complexity | Release cadence | Team size |
+|----------------|------------|-----------------|-----------|
+| GitFlow        | High       | Scheduled       | Large     |
+| Trunk-based    | Low        | Continuous      | Any       |
+| GitHub Flow    | Medium     | Continuous      | Small-Med |
+
+FOR YOUR DEVOPS JOURNEY: Learn GitFlow to understand it, but
+practice Trunk-Based — it's what CI/CD pipelines are designed for.

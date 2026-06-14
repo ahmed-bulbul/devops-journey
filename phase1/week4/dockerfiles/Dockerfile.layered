@@ -1,0 +1,55 @@
+# Dockerfile.layered — Layered JAR for optimal Docker cache efficiency
+#
+# Spring Boot 2.3+ supports layered JARs which split the JAR into:
+#   1. dependencies        (rarely changes)
+#   2. spring-boot-loader  (rarely changes)
+#   3. snapshot-dependencies (changes sometimes)
+#   4. application         (changes every build)
+#
+# Docker caches each layer separately.
+# Result: subsequent builds only push the 'application' layer (~100KB)
+# instead of the full JAR (~50MB). Huge CI/CD speed improvement.
+#
+# Requires in pom.xml:
+#   <plugin>
+#     <groupId>org.springframework.boot</groupId>
+#     <artifactId>spring-boot-maven-plugin</artifactId>
+#     <configuration>
+#       <layers><enabled>true</enabled></layers>
+#     </configuration>
+#   </plugin>
+
+# ─── Stage 1: Build ──────────────────────────────────────────────────────────
+FROM eclipse-temurin:17-jdk AS builder
+
+WORKDIR /build
+COPY mvnw . && COPY .mvn .mvn && COPY pom.xml .
+RUN ./mvnw dependency:go-offline -B
+COPY src ./src
+RUN ./mvnw package -DskipTests -B
+
+# Extract layers from the JAR
+RUN java -Djarmode=layertools -jar target/*.jar extract --destination extracted
+
+# ─── Stage 2: Runtime ────────────────────────────────────────────────────────
+FROM eclipse-temurin:17-jre AS runtime
+
+RUN groupadd --gid 1001 appgroup && \
+    useradd --uid 1001 --gid appgroup --shell /bin/sh appuser
+
+WORKDIR /app
+
+# Copy layers in order of how rarely they change (best cache efficiency)
+COPY --from=builder /build/extracted/dependencies/ ./
+COPY --from=builder /build/extracted/spring-boot-loader/ ./
+COPY --from=builder /build/extracted/snapshot-dependencies/ ./
+COPY --from=builder /build/extracted/application/ ./
+
+RUN chown -R appuser:appgroup /app
+USER appuser
+
+EXPOSE 8080
+
+ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
+
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS org.springframework.boot.loader.JarLauncher"]

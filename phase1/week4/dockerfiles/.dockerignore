@@ -1,0 +1,38 @@
+# .dockerignore — exclude these from the Docker build context
+# Smaller context = faster builds
+
+# Maven build output (MOST IMPORTANT — target/ is huge)
+target/
+!target/*.jar
+
+# Git
+.git
+.gitignore
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+*.class
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local config overrides (never bake secrets into images)
+*.env
+.env
+application-local.properties
+application-local.yml
+
+# Test reports
+surefire-reports/
+jacoco/
+
+# Docker files themselves (no need in context)
+Dockerfile*
+docker-compose*

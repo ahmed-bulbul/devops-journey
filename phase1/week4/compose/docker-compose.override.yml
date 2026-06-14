@@ -1,0 +1,42 @@
+# docker-compose.override.yml — Local development overrides
+# Docker Compose auto-merges this with docker-compose.yml
+# Do NOT commit secrets in this file — use .env instead
+#
+# Override examples: hot reload, debug ports, relaxed health checks
+
+version: '3.8'
+
+services:
+
+  app:
+    # Mount source for hot reload (requires Spring DevTools)
+    volumes:
+      - ./src:/app/src:ro
+    environment:
+      SPRING_PROFILES_ACTIVE: local,docker
+      JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+    ports:
+      - "8080:8080"
+      - "5005:5005"     # Remote debug port
+    # More forgiving health check for local dev
+    healthcheck:
+      start_period: 120s
+
+  postgres:
+    # Expose DB directly for local DB tools (DBeaver, IntelliJ)
+    ports:
+      - "5432:5432"
+
+  # Add pgAdmin for local development
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: bulbul@devops.local
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    networks:
+      - backend
+    depends_on:
+      - postgres

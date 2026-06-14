@@ -1,0 +1,39 @@
+#!/bin/bash
+# .git/hooks/commit-msg
+# Validates commit message follows Conventional Commits format.
+# Exit non-zero to ABORT the commit.
+#
+# Install: cp hooks/commit-msg .git/hooks/commit-msg && chmod +x .git/hooks/commit-msg
+
+COMMIT_MSG_FILE=$1
+COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+
+# Skip merge commits
+if echo "$COMMIT_MSG" | grep -qE "^Merge "; then
+    exit 0
+fi
+
+# Skip revert commits
+if echo "$COMMIT_MSG" | grep -qE "^Revert "; then
+    exit 0
+fi
+
+# Conventional commit pattern
+PATTERN="^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\(.+\))?(!)?: .{1,72}"
+
+if ! echo "$COMMIT_MSG" | grep -qE "$PATTERN"; then
+    echo ""
+    echo "[commit-msg] FAIL: Commit message does not follow Conventional Commits format."
+    echo ""
+    echo "  Expected: <type>(<scope>): <description>"
+    echo "  Example:  feat(auth): add JWT validation"
+    echo "  Example:  fix(order): prevent null pointer on empty cart"
+    echo ""
+    echo "  Valid types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert"
+    echo ""
+    echo "  Your message was: $COMMIT_MSG"
+    echo ""
+    exit 1
+fi
+
+echo "[commit-msg] OK: Commit message follows Conventional Commits format."

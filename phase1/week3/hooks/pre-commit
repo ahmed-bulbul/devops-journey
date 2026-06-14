@@ -1,0 +1,38 @@
+#!/bin/bash
+# .git/hooks/pre-commit
+# Runs before every commit. Exit non-zero to ABORT the commit.
+#
+# Install: cp hooks/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+
+set -e
+
+echo "[pre-commit] Running checks..."
+
+# ─── 1. Check for debug/TODO left in staged Java files ────────────────────────
+STAGED_JAVA=$(git diff --cached --name-only | grep "\.java$" || true)
+
+if [ -n "$STAGED_JAVA" ]; then
+    if git diff --cached "$STAGED_JAVA" | grep -E "^\+.*(System\.out\.println|TODO:|FIXME:)" > /dev/null 2>&1; then
+        echo "[pre-commit] FAIL: Found System.out.println or TODO/FIXME in staged Java files."
+        echo "             Remove them or use proper logging before committing."
+        exit 1
+    fi
+    echo "[pre-commit] OK: No debug prints found in Java files"
+fi
+
+# ─── 2. Check for secrets accidentally staged ─────────────────────────────────
+if git diff --cached | grep -iE "^\+(password|secret|api_key|token|private_key)\s*=" > /dev/null 2>&1; then
+    echo "[pre-commit] FAIL: Possible secret/password detected in staged changes!"
+    echo "             Use environment variables or AWS Secrets Manager instead."
+    exit 1
+fi
+echo "[pre-commit] OK: No secrets detected"
+
+# ─── 3. Check .env files are not staged ──────────────────────────────────────
+if git diff --cached --name-only | grep -E "^\.env$|\.env\." > /dev/null 2>&1; then
+    echo "[pre-commit] FAIL: .env file is staged! Add .env to .gitignore."
+    exit 1
+fi
+echo "[pre-commit] OK: No .env files staged"
+
+echo "[pre-commit] All checks passed."

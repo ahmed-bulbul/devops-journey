@@ -1,0 +1,36 @@
+# Dockerfile.secure — Hardened production Dockerfile
+# Covers: non-root user, read-only filesystem, minimal image, health check
+
+FROM eclipse-temurin:17-jdk AS builder
+WORKDIR /build
+COPY mvnw . && COPY .mvn .mvn && COPY pom.xml .
+RUN ./mvnw dependency:go-offline -B
+COPY src ./src
+RUN ./mvnw package -DskipTests -B
+RUN java -Djarmode=layertools -jar target/*.jar extract --destination extracted
+
+# Use distroless — no shell, no package manager, minimal attack surface
+FROM gcr.io/distroless/java17-debian12 AS runtime
+
+# OR use eclipse-temurin:17-jre-alpine (smaller than full JRE, has shell)
+# FROM eclipse-temurin:17-jre-alpine AS runtime
+
+WORKDIR /app
+
+COPY --from=builder /build/extracted/dependencies/ ./
+COPY --from=builder /build/extracted/spring-boot-loader/ ./
+COPY --from=builder /build/extracted/snapshot-dependencies/ ./
+COPY --from=builder /build/extracted/application/ ./
+
+# distroless images run as non-root (uid 65532) by default
+# No USER directive needed — distroless handles this
+
+EXPOSE 8080
+
+# Health check — Docker will mark container unhealthy if this fails
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8080/actuator/health || exit 1
+
+ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -Djava.security.egd=file:/dev/./urandom"
+
+ENTRYPOINT ["java", "-jar", "app.jar"]

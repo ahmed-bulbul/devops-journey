@@ -1,0 +1,27 @@
+# Dockerfile.basic — Simple single-stage Spring Boot Dockerfile
+# Problem: image is huge (includes JDK + Maven + source code)
+# Use this to understand basics, then move to Dockerfile.multistage
+
+FROM eclipse-temurin:17-jdk
+
+WORKDIR /app
+
+# Copy Maven wrapper and pom.xml first (better cache — only re-download deps when pom changes)
+COPY mvnw .
+COPY .mvn .mvn
+COPY pom.xml .
+
+# Download dependencies (this layer is cached unless pom.xml changes)
+RUN ./mvnw dependency:go-offline -B
+
+# Copy source code
+COPY src ./src
+
+# Build the application
+RUN ./mvnw package -DskipTests
+
+# Expose port
+EXPOSE 8080
+
+# Run the jar
+CMD ["java", "-jar", "target/app.jar"]

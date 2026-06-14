@@ -1,0 +1,56 @@
+Conventional Commits — Reference
+==================================
+Spec: https://www.conventionalcommits.org
+
+FORMAT
+------
+<type>(<scope>): <short description>
+
+[optional body]
+
+[optional footer]
+
+TYPES
+-----
+feat      New feature
+fix       Bug fix
+docs      Documentation only
+style     Formatting, missing semicolons (no logic change)
+refactor  Code change that neither fixes a bug nor adds a feature
+perf      Performance improvement
+test      Adding or fixing tests
+build     Build system or dependencies (Maven, Docker, npm)
+ci        CI/CD configuration (GitHub Actions, Jenkins)
+chore     Maintenance (updating .gitignore, bumping versions)
+revert    Reverts a previous commit
+
+EXAMPLES
+--------
+feat(auth): add JWT token validation
+fix(order): prevent null pointer when cart is empty
+docs(readme): add Docker setup instructions
+refactor(user): extract email validation to utility class
+test(product): add unit tests for price calculation
+ci(github-actions): add SonarQube quality gate step
+build(docker): add multi-stage Dockerfile for order-service
+chore(deps): bump spring-boot from 3.2.4 to 3.2.5
+
+BREAKING CHANGES
+----------------
+feat(api)!: change user endpoint from /user to /users
+
+# or in footer:
+feat(auth): migrate from JWT to OAuth2
+
+BREAKING CHANGE: JWT tokens are no longer accepted.
+Clients must use OAuth2 bearer tokens.
+
+WHY CONVENTIONAL COMMITS?
+--------------------------
+1. Auto-generate CHANGELOG (git-cliff, standard-version)
+2. Auto-bump semantic version (MAJOR.MINOR.PATCH)
+   - feat → bumps MINOR (1.2.0 → 1.3.0)
+   - fix  → bumps PATCH (1.2.0 → 1.2.1)
+   - BREAKING CHANGE → bumps MAJOR (1.2.0 → 2.0.0)
+3. Makes PR descriptions and reviews cleaner
+4. Required by many CI tools for release automation

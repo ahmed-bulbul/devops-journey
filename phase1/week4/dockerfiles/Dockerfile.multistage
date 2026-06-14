@@ -1,0 +1,47 @@
+# Dockerfile.multistage — Production-quality multi-stage build
+#
+# Stage 1 (builder): JDK + Maven → compiles and packages the JAR
+# Stage 2 (runtime): JRE only   → runs the JAR
+#
+# Result: final image has NO Maven, NO source code, NO JDK
+# Size comparison: basic ~600MB vs multistage ~250MB
+
+# ─── Stage 1: Build ──────────────────────────────────────────────────────────
+FROM eclipse-temurin:17-jdk AS builder
+
+WORKDIR /build
+
+# Copy dependency files first (cache layer — only invalidated when pom.xml changes)
+COPY mvnw .
+COPY .mvn .mvn
+COPY pom.xml .
+RUN ./mvnw dependency:go-offline -B
+
+# Copy source and build
+COPY src ./src
+RUN ./mvnw package -DskipTests -B
+
+# ─── Stage 2: Runtime ────────────────────────────────────────────────────────
+FROM eclipse-temurin:17-jre AS runtime
+
+# Security: run as non-root user
+RUN groupadd --gid 1001 appgroup && \
+    useradd --uid 1001 --gid appgroup --shell /bin/sh appuser
+
+WORKDIR /app
+
+# Copy ONLY the built JAR from the builder stage
+COPY --from=builder /build/target/*.jar app.jar
+
+# Set ownership
+RUN chown appuser:appgroup app.jar
+
+# Switch to non-root
+USER appuser
+
+EXPOSE 8080
+
+# JVM tuning for containers
+ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
+
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

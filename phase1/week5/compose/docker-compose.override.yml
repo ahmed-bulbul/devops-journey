@@ -1,0 +1,55 @@
+# docker-compose.override.yml — Local development overrides
+# Auto-merged with docker-compose.yml by Docker Compose
+# Add DEBUG ports, relaxed health checks, extra tools for local dev
+
+version: '3.8'
+
+services:
+
+  user-service:
+    environment:
+      JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5001"
+      SPRING_JPA_SHOW_SQL: "true"
+    ports:
+      - "8081:8081"
+      - "5001:5001"     # remote debug port
+    healthcheck:
+      start_period: 120s
+
+  order-service:
+    environment:
+      JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5002"
+      SPRING_JPA_SHOW_SQL: "true"
+    ports:
+      - "8082:8082"
+      - "5002:5002"
+    healthcheck:
+      start_period: 120s
+
+  product-service:
+    environment:
+      JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5003"
+    ports:
+      - "8083:8083"
+      - "5003:5003"
+    healthcheck:
+      start_period: 120s
+
+  mysql:
+    ports:
+      - "3306:3306"     # expose for DBeaver/IntelliJ
+
+  redis:
+    ports:
+      - "6380:6379"     # expose for RedisInsight
+
+  # Additional dev tools
+  adminer:
+    image: adminer:latest
+    container_name: adminer
+    ports:
+      - "8888:8080"
+    networks:
+      - backend
+    depends_on:
+      - mysql
